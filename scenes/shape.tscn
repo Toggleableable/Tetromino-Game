@@ -1,0 +1,34 @@
+[gd_scene load_steps=9 format=3 uid="uid://5k1foyyc7pcp"]
+
+[ext_resource type="Script" uid="uid://b230q5prxk82u" path="res://scripts/shape.gd" id="1_2qewn"]
+[ext_resource type="Script" uid="uid://rulp7wmqrn2t" path="res://scripts/i_piece.gd" id="2_nodf0"]
+[ext_resource type="Script" uid="uid://bh3mb6px7cta4" path="res://scripts/o_piece.gd" id="3_o8q4y"]
+[ext_resource type="Script" uid="uid://lranmbgy1gdm" path="res://scripts/t_piece.gd" id="4_u08hl"]
+[ext_resource type="Script" uid="uid://d3324m4ois5vv" path="res://scripts/s_piece.gd" id="5_p6bdw"]
+[ext_resource type="Script" uid="uid://brjttitrwg56o" path="res://scripts/z_piece.gd" id="6_8t262"]
+[ext_resource type="Script" uid="uid://7qudmy2mhwdd" path="res://scripts/j_piece.gd" id="7_rqnak"]
+[ext_resource type="Script" uid="uid://dwtt6gs2sv34g" path="res://scripts/l_piece.gd" id="8_tfcyj"]
+
+[node name="Shape" type="Node"]
+script = ExtResource("1_2qewn")
+
+[node name="IPiece" type="Node" parent="."]
+script = ExtResource("2_nodf0")
+
+[node name="OPiece" type="Node" parent="."]
+script = ExtResource("3_o8q4y")
+
+[node name="TPiece" type="Node" parent="."]
+script = ExtResource("4_u08hl")
+
+[node name="SPiece" type="Node" parent="."]
+script = ExtResource("5_p6bdw")
+
+[node name="ZPiece" type="Node" parent="."]
+script = ExtResource("6_8t262")
+
+[node name="JPiece" type="Node" parent="."]
+script = ExtResource("7_rqnak")
+
+[node name="LPiece" type="Node" parent="."]
+script = ExtResource("8_tfcyj")
