@@ -23,7 +23,7 @@ sources/0 = SubResource("TileSetAtlasSource_0wfyh")
 anchor_mode = 0
 
 [node name="GameArea" type="TileMapLayer" parent="."]
-scale = Vector2(2, 2)
+scale = Vector2(3, 3)
 tile_set = SubResource("TileSet_sugp2")
 script = ExtResource("2_0wfyh")
 
