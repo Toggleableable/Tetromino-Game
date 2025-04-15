@@ -41,12 +41,15 @@ func _process(_delta):
 		current_rotation = current_piece.rotate_piece(current_rotation, -1)
 
 func can_move(direction: Vector2i) -> bool:
-	var used_cells = get_used_cells()
+	var used_cells = $PlacedPieces.get_used_cells()
 	for i in current_piece.piece_shapes[current_rotation]:
-		var piece_location = i + current_location
-		if (piece_location + direction).x < 0 or (piece_location + direction).x > columns - 1 or (piece_location + direction).y > rows - 1:
+		var piece_location = i + current_location + direction
+		if piece_location.x < 0 or piece_location.x > columns - 1 or piece_location.y > rows - 1:
 			return false
 		# TODO use used_cells to check if piece is overlapping with other piece
+		print(used_cells)
+		if piece_location in used_cells:
+			return false
 	
 	return true
 
@@ -71,6 +74,14 @@ func move_piece(direction: Vector2i):
 		clear_piece()
 		current_location += direction
 		draw_piece()
+	else:
+		place_piece()
+
+func place_piece():
+	clear_piece()
+	for i in current_piece.piece_shapes[current_rotation]:
+		$PlacedPieces.set_cell(i + current_location, tileset_id, Vector2i(current_piece.colour_index, 0))
+	create_piece()
 
 ## Shuffles the possible pieces and appends them to the next_pieces array (7-Bag)
 func shuffle_pieces():

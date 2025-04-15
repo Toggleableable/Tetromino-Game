@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=4 uid="uid://0x1wpp236fdk"]
+[gd_scene load_steps=8 format=4 uid="uid://0x1wpp236fdk"]
 
 [ext_resource type="Texture2D" uid="uid://rvsmguaenvug" path="res://assets/Default Tetromino Tilemap.png" id="1_o5qli"]
 [ext_resource type="Script" uid="uid://c72g17oe8kh2w" path="res://scripts/game_area.gd" id="2_0wfyh"]
@@ -17,6 +17,19 @@ texture = ExtResource("1_o5qli")
 [sub_resource type="TileSet" id="TileSet_sugp2"]
 sources/0 = SubResource("TileSetAtlasSource_0wfyh")
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sugp2"]
+texture = ExtResource("1_o5qli")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_jyhfs"]
+sources/0 = SubResource("TileSetAtlasSource_sugp2")
+
 [node name="MainScene" type="Node"]
 
 [node name="Camera2D" type="Camera2D" parent="."]
@@ -31,5 +44,8 @@ script = ExtResource("2_0wfyh")
 [node name="Shape" parent="GameArea" instance=ExtResource("3_sugp2")]
 
 [node name="DropPieceTimer" type="Timer" parent="GameArea"]
+
+[node name="PlacedPieces" type="TileMapLayer" parent="GameArea"]
+tile_set = SubResource("TileSet_jyhfs")
 
 [connection signal="timeout" from="GameArea/DropPieceTimer" to="GameArea" method="_on_drop_piece_timer_timeout"]
