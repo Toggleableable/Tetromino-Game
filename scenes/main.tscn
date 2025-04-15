@@ -30,3 +30,5 @@ script = ExtResource("2_0wfyh")
 [node name="Shape" parent="GameArea" instance=ExtResource("3_sugp2")]
 
 [node name="DropPieceTimer" type="Timer" parent="GameArea"]
+
+[connection signal="timeout" from="GameArea/DropPieceTimer" to="GameArea" method="_on_drop_piece_timer_timeout"]
