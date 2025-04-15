@@ -40,6 +40,16 @@ func _process(_delta):
 	if Input.is_action_just_pressed("rotate_counter_clockwise"):
 		current_rotation = current_piece.rotate_piece(current_rotation, -1)
 
+func can_move(direction: Vector2i) -> bool:
+	var used_cells = get_used_cells()
+	for i in current_piece.piece_shapes[current_rotation]:
+		var piece_location = i + current_location
+		if (piece_location + direction).x < 0 or (piece_location + direction).x > columns - 1 or (piece_location + direction).y > rows - 1:
+			return false
+		# TODO use used_cells to check if piece is overlapping with other piece
+	
+	return true
+
 func clear_piece():
 	for i in current_piece.piece_shapes[current_rotation]:
 		erase_cell(i + current_location)
@@ -49,6 +59,7 @@ func create_piece():
 	current_location = start_location
 	current_piece = pieces[next_pieces.pop_front()]
 	draw_piece()
+	move_piece(Vector2i.DOWN)
 
 ## Iterates through the cells in a piece and draws them in the given location
 func draw_piece():
@@ -56,9 +67,10 @@ func draw_piece():
 		set_cell(i + current_location, tileset_id, Vector2i(current_piece.colour_index, 0))
 
 func move_piece(direction: Vector2i):
-	clear_piece()
-	current_location += direction
-	draw_piece()
+	if can_move(direction):
+		clear_piece()
+		current_location += direction
+		draw_piece()
 
 ## Shuffles the possible pieces and appends them to the next_pieces array (7-Bag)
 func shuffle_pieces():
