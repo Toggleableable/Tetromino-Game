@@ -25,10 +25,20 @@ func _ready():
 	create_piece()
 	$DropPieceTimer.start(fall_time)
 
-func _process(delta):
-	if Input.is_action_pressed("soft_drop"):
+func _process(_delta):
+	# TODO change to be based on time, implement DAS and ARR
+	if Input.is_action_just_pressed("soft_drop"):
 		move_piece(Vector2i.DOWN)
 		$DropPieceTimer.start(fall_time)
+	if Input.is_action_just_pressed("move_left"):
+		move_piece(Vector2i.LEFT)
+	if Input.is_action_just_pressed("move_right"):
+		move_piece(Vector2i.RIGHT)
+	
+	if Input.is_action_just_pressed("rotate_clockwise"):
+		current_rotation = current_piece.rotate_piece(current_rotation, 1)
+	if Input.is_action_just_pressed("rotate_counter_clockwise"):
+		current_rotation = current_piece.rotate_piece(current_rotation, -1)
 
 func clear_piece():
 	for i in current_piece.piece_shapes[current_rotation]:
