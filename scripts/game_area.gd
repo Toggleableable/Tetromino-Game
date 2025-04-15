@@ -5,6 +5,7 @@ const columns: int = 10
 const start_location: Vector2i = Vector2i(2,0)
 const start_rotation: int = 0
 
+var fall_time: float
 var pieces: Array
 var next_pieces: Array = []
 var next_piece: int
@@ -22,10 +23,16 @@ func _ready():
 	# New Game
 	shuffle_pieces()
 	create_piece()
-	$DropPieceTimer.start()
+	$DropPieceTimer.start(fall_time)
 
 func _process(delta):
-	pass
+	if Input.is_action_pressed("soft_drop"):
+		move_piece(Vector2i.DOWN)
+		$DropPieceTimer.start(fall_time)
+
+func clear_piece():
+	for i in current_piece.piece_shapes[current_rotation]:
+		erase_cell(i + current_location)
 
 func create_piece():
 	current_rotation = start_rotation
@@ -39,6 +46,7 @@ func draw_piece():
 		set_cell(i + current_location, tileset_id, Vector2i(current_piece.colour_index, 0))
 
 func move_piece(direction: Vector2i):
+	clear_piece()
 	current_location += direction
 	draw_piece()
 
