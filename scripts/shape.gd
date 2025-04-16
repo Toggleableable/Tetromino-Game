@@ -12,6 +12,7 @@ var wall_kicks: Array = [	[Vector2i(0,0), Vector2i(-1,0), Vector2i(-1, -1), Vect
 							[Vector2i(0,0), Vector2i(-1,0), Vector2i(-1,1), Vector2i(0,-2), Vector2i(-1,-2)],
 							]
 
+## Returns the index for the rotated piece
 func rotate_piece(current_rotation, direction) -> int:
 	# direction must be 1 for clockwise, -1 for counter clockwise
-	return (current_rotation + direction) % 4
+	return (4 + current_rotation + direction) % 4
