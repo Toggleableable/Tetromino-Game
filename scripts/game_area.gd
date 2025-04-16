@@ -75,13 +75,20 @@ func create_piece():
 	if next_pieces.size() < next_queue:
 		shuffle_pieces()
 	current_piece = pieces[next_pieces.pop_front()]
+	
 	draw_piece()
-	move_piece(Vector2i.DOWN)
+	if !can_move(Vector2i.ZERO):
+		game_over()
+	else:
+		move_piece(Vector2i.DOWN)
 
 ## Iterates through the cells in a piece and draws them in the given location
 func draw_piece():
 	for i in current_piece.piece_shapes[current_rotation]:
 		set_cell(i + current_location, tileset_id, Vector2i(current_piece.colour_index, 0))
+
+func game_over():
+	$DropPieceTimer.stop()
 
 ## Moves the current piece in the direction specified
 func move_piece(direction: Vector2i):
@@ -94,10 +101,16 @@ func move_piece(direction: Vector2i):
 
 ## Places the piece onto the placed layer and creates the next piece
 func place_piece():
-	clear_piece()
+	var out_of_field: bool = true
 	for i in current_piece.piece_shapes[current_rotation]:
 		$PlacedPieces.set_cell(i + current_location, tileset_id, Vector2i(current_piece.colour_index, 0))
-	create_piece()
+		if (i + current_location).y > 1:
+			out_of_field = false
+	if out_of_field:
+		game_over()
+	else:
+		clear_piece()
+		create_piece()
 
 func rotate_piece(direction):
 	clear_piece()
