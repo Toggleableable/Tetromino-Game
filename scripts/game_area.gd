@@ -89,6 +89,8 @@ func draw_piece():
 
 func game_over():
 	$DropPieceTimer.stop()
+	print("End")
+	# TODO Add game over screen + option to restart
 
 ## Moves the current piece in the direction specified
 func move_piece(direction: Vector2i):
