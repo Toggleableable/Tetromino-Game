@@ -32,6 +32,14 @@ func _process(_delta):
 	if Input.is_action_just_pressed("soft_drop"):
 		move_piece(Vector2i.DOWN)
 		$DropPieceTimer.start(fall_time)
+	if Input.is_action_just_pressed("hard_drop"):
+		var distance: int = 0
+		while can_move((distance + 1) * Vector2i.DOWN):
+			distance += 1
+		clear_piece()
+		current_location += distance * Vector2i.DOWN
+		place_piece()
+	
 	if Input.is_action_just_pressed("move_left"):
 		move_piece(Vector2i.LEFT)
 	if Input.is_action_just_pressed("move_right"):
