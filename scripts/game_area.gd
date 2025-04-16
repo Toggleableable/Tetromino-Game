@@ -132,14 +132,12 @@ func rotate_piece(direction):
 	
 	var kick_list: Array = current_piece.wall_kicks[index]
 	for i in kick_list:
-		if can_move(i, attempt_rotate):
+		if can_move(direction * i, attempt_rotate):
 			clear_piece()
-			current_location += i
+			current_location += direction * i
 			current_rotation = attempt_rotate
 			draw_piece()
 			return
-	
-	print("cannot rotate")
 
 ## Shuffles the possible pieces and appends them to the next_pieces array (7-Bag)
 func shuffle_pieces():
