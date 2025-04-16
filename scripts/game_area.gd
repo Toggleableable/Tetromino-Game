@@ -5,13 +5,13 @@ const columns: int = 10
 const start_location: Vector2i = Vector2i(3,0)
 const start_rotation: int = 0
 const next_queue: int = 5
+const next_queue_location: Vector2i = Vector2i(15,2)
 const place_time: float = 0.5
 const place_reset_limit: int = 15
 
-var fall_time: float
+var fall_time: float = 1
 var pieces: Array
 var next_pieces: Array = []
-var next_piece: int
 var shuffle_array: Array
 var tileset_id: int = 0
 var place_resets: int = 0
@@ -32,7 +32,6 @@ func _process(_delta):
 	# TODO change to be based on time, implement DAS and ARR
 	if Input.is_action_just_pressed("soft_drop"):
 		move_piece(Vector2i.DOWN)
-		$DropPieceTimer.start(fall_time)
 	if Input.is_action_just_pressed("hard_drop"):
 		var distance: int = 0
 		while can_move((distance + 1) * Vector2i.DOWN):
@@ -62,9 +61,9 @@ func can_move(direction: Vector2i = Vector2i.ZERO, new_rotation: int = current_r
 	return true
 
 ## Clears the tiles of the current piece in the current location
-func clear_piece():
-	for i in current_piece.piece_shapes[current_rotation]:
-		erase_cell(i + current_location)
+func clear_piece(piece: Shape = current_piece, location: Vector2i = current_location):
+	for i in piece.piece_shapes[current_rotation]:
+		erase_cell(i + location)
 
 ## Generates a new piece from the next_pieces queue and reset all the relavent variables
 func create_piece():
@@ -72,20 +71,33 @@ func create_piece():
 	current_location = start_location
 	place_resets = 0
 	$DropPieceTimer.start(fall_time)
-	if next_pieces.size() < next_queue:
+	if next_pieces.size() <= next_queue:
 		shuffle_pieces()
 	current_piece = pieces[next_pieces.pop_front()]
 	
 	draw_piece()
+	draw_next_pieces()
 	if !can_move():
 		game_over()
 	else:
 		move_piece(Vector2i.DOWN)
 
+## Draws the queue of next pieces to the side of the board
+func draw_next_pieces():
+	var draw_location = next_queue_location
+	for i in range(next_queue):
+		if i == 0:
+			clear_piece(current_piece, draw_location)
+		else:
+			clear_piece(pieces[next_pieces[i-1]], draw_location)
+		
+		draw_piece(pieces[next_pieces[i]], draw_location)
+		draw_location += Vector2i(0, 3)
+
 ## Iterates through the cells in a piece and draws them in the given location
-func draw_piece():
-	for i in current_piece.piece_shapes[current_rotation]:
-		set_cell(i + current_location, tileset_id, Vector2i(current_piece.colour_index, 0))
+func draw_piece(piece: Shape = current_piece, location: Vector2i = current_location):
+	for i in piece.piece_shapes[current_rotation]:
+		set_cell(i + location, tileset_id, Vector2i(piece.colour_index, 0))
 
 func game_over():
 	$DropPieceTimer.stop()
@@ -95,6 +107,8 @@ func game_over():
 ## Moves the current piece in the direction specified
 func move_piece(direction: Vector2i):
 	if can_move(direction):
+		if direction == Vector2i.DOWN:
+			$DropPieceTimer.start(fall_time)
 		clear_piece()
 		current_location += direction
 		draw_piece()
