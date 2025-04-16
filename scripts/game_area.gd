@@ -38,9 +38,9 @@ func _process(_delta):
 		move_piece(Vector2i.RIGHT)
 	
 	if Input.is_action_just_pressed("rotate_clockwise"):
-		current_rotation = current_piece.rotate_piece(current_rotation, 1)
+		rotate_piece(1)
 	if Input.is_action_just_pressed("rotate_counter_clockwise"):
-		current_rotation = current_piece.rotate_piece(current_rotation, -1)
+		rotate_piece(-1)
 
 ## Checks if the current piece is able to move in the direction given
 func can_move(direction: Vector2i) -> bool:
@@ -63,7 +63,7 @@ func create_piece():
 	current_rotation = start_rotation
 	current_location = start_location
 	place_resets = 0
-	#$DropPieceTimer.start(fall_time)
+	$DropPieceTimer.start(fall_time)
 	if next_pieces.size() < next_queue:
 		shuffle_pieces()
 	current_piece = pieces[next_pieces.pop_front()]
@@ -90,6 +90,11 @@ func place_piece():
 	for i in current_piece.piece_shapes[current_rotation]:
 		$PlacedPieces.set_cell(i + current_location, tileset_id, Vector2i(current_piece.colour_index, 0))
 	create_piece()
+
+func rotate_piece(direction):
+	clear_piece()
+	current_rotation = current_piece.rotate_piece(current_rotation, direction)
+	draw_piece()
 
 ## Shuffles the possible pieces and appends them to the next_pieces array (7-Bag)
 func shuffle_pieces():
