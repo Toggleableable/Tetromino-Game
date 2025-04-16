@@ -2,8 +2,9 @@ extends TileMapLayer
 
 const rows: int = 22
 const columns: int = 10
-const start_location: Vector2i = Vector2i(2,0)
+const start_location: Vector2i = Vector2i(3,-1)
 const start_rotation: int = 0
+const next_queue: int = 5
 
 var fall_time: float
 var pieces: Array
@@ -41,13 +42,11 @@ func _process(_delta):
 		current_rotation = current_piece.rotate_piece(current_rotation, -1)
 
 func can_move(direction: Vector2i) -> bool:
-	var used_cells = $PlacedPieces.get_used_cells()
+	var used_cells: Array = $PlacedPieces.get_used_cells()
 	for i in current_piece.piece_shapes[current_rotation]:
 		var piece_location = i + current_location + direction
 		if piece_location.x < 0 or piece_location.x > columns - 1 or piece_location.y > rows - 1:
 			return false
-		# TODO use used_cells to check if piece is overlapping with other piece
-		print(used_cells)
 		if piece_location in used_cells:
 			return false
 	
@@ -60,6 +59,8 @@ func clear_piece():
 func create_piece():
 	current_rotation = start_rotation
 	current_location = start_location
+	if next_pieces.size() < next_queue:
+		shuffle_pieces()
 	current_piece = pieces[next_pieces.pop_front()]
 	draw_piece()
 	move_piece(Vector2i.DOWN)
@@ -74,7 +75,7 @@ func move_piece(direction: Vector2i):
 		clear_piece()
 		current_location += direction
 		draw_piece()
-	else:
+	elif direction == Vector2i.DOWN:
 		place_piece()
 
 func place_piece():
