@@ -2,7 +2,7 @@ extends TileMapLayer
 
 const rows: int = 22
 const columns: int = 10
-const start_location: Vector2i = Vector2i(3,-1)
+const start_location: Vector2i = Vector2i(3,0)
 const start_rotation: int = 0
 const next_queue: int = 5
 const place_time: float = 0.5
@@ -15,6 +15,7 @@ var next_piece: int
 var shuffle_array: Array
 var tileset_id: int = 0
 var place_resets: int = 0
+var used_cells: Array = []
 
 var current_rotation: int = 0
 var current_location: Vector2i = start_location
@@ -51,9 +52,8 @@ func _process(_delta):
 		rotate_piece(-1)
 
 ## Checks if the current piece is able to move in the direction given
-func can_move(direction: Vector2i) -> bool:
-	var used_cells: Array = $PlacedPieces.get_used_cells()
-	for i in current_piece.piece_shapes[current_rotation]:
+func can_move(direction: Vector2i = Vector2i.ZERO, new_rotation: int = current_rotation) -> bool:
+	for i in current_piece.piece_shapes[new_rotation]:
 		var piece_location = i + current_location + direction
 		if piece_location.x < 0 or piece_location.x > columns - 1 or piece_location.y > rows - 1:
 			return false
@@ -77,7 +77,7 @@ func create_piece():
 	current_piece = pieces[next_pieces.pop_front()]
 	
 	draw_piece()
-	if !can_move(Vector2i.ZERO):
+	if !can_move():
 		game_over()
 	else:
 		move_piece(Vector2i.DOWN)
@@ -113,11 +113,33 @@ func place_piece():
 	else:
 		clear_piece()
 		create_piece()
+		used_cells = $PlacedPieces.get_used_cells()
 
 func rotate_piece(direction):
-	clear_piece()
-	current_rotation = current_piece.rotate_piece(current_rotation, direction)
-	draw_piece()
+	var attempt_rotate: int = current_piece.rotate_piece(current_rotation, direction)
+	
+	# Set the index to get the correct kicks for the rotation
+	var index: int
+	match current_rotation:
+		0:
+			index = 0 if direction==1 else 3
+		1:
+			index = 1 if direction==1 else 0
+		2:
+			index = 2 if direction==1 else 1
+		3:
+			index = 3 if direction==1 else 2
+	
+	var kick_list: Array = current_piece.wall_kicks[index]
+	for i in kick_list:
+		if can_move(i, attempt_rotate):
+			clear_piece()
+			current_location += i
+			current_rotation = attempt_rotate
+			draw_piece()
+			return
+	
+	print("cannot rotate")
 
 ## Shuffles the possible pieces and appends them to the next_pieces array (7-Bag)
 func shuffle_pieces():
