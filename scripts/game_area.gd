@@ -29,6 +29,8 @@ func _ready():
 	create_piece()
 
 func _process(_delta):
+	if Input.is_action_just_pressed("exit"):
+		get_tree().quit()
 	# TODO change to be based on time, implement DAS and ARR
 	if Input.is_action_just_pressed("soft_drop"):
 		move_piece(Vector2i.DOWN)
@@ -125,7 +127,12 @@ func place_piece():
 	if out_of_field:
 		game_over()
 	else:
-		clear_piece()
+		# TODO next defining these functions
+		if row_full():
+			clear_row()
+		else:
+			clear_piece()
+		
 		create_piece()
 		used_cells = $PlacedPieces.get_used_cells()
 
@@ -152,6 +159,12 @@ func rotate_piece(direction):
 			current_rotation = attempt_rotate
 			draw_piece()
 			return
+
+func row_full():
+	pass
+
+func clear_row():
+	pass
 
 ## Shuffles the possible pieces and appends them to the next_pieces array (7-Bag)
 func shuffle_pieces():
