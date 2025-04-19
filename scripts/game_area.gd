@@ -20,7 +20,7 @@ var used_cells: Array = []
 var current_rotation: int = 0
 var current_location: Vector2i = start_location
 var current_piece: Shape
-var cells_in_rows: Array[int] = []
+var cells_in_rows: Array = []
 
 func _ready():
 	pieces = $Shape.get_children()
@@ -28,7 +28,9 @@ func _ready():
 	
 	# New Game
 	cells_in_rows.resize(rows)
-	cells_in_rows.fill(0)
+	for i in rows:
+		cells_in_rows[i] = []
+	
 	create_piece()
 
 func _process(_delta):
@@ -124,7 +126,7 @@ func move_piece(direction: Vector2i):
 func place_piece():
 	var out_of_field: bool = true
 	for i in current_piece.piece_shapes[current_rotation]:
-		cells_in_rows[i.y + current_location.y] += 1
+		cells_in_rows[i.y + current_location.y].append(i + current_location)
 		$PlacedPieces.set_cell(i + current_location, tileset_id, Vector2i(current_piece.colour_index, 0))
 		if (i + current_location).y > 1:
 			out_of_field = false
@@ -162,11 +164,15 @@ func rotate_piece(direction):
 			return
 
 func check_full_rows():
+	var full_rows: Array[int] = []
 	for i in range(rows):
-		if cells_in_rows[i] == 10:
-			clear_row(i)
+		if cells_in_rows[i].size() == 10:
+			full_rows.append(i)
+	clear_row(full_rows)
 
-func clear_row(row: int):
+func clear_row(row: Array[int]):
+	#for i in cells_in_rows:
+	
 	pass
 
 ## Shuffles the possible pieces and appends them to the next_pieces array (7-Bag)
