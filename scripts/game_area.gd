@@ -11,21 +11,24 @@ const place_reset_limit: int = 15
 
 var fall_time: float = 1
 var pieces: Array
-var next_pieces: Array = []
 var shuffle_array: Array
 var tileset_id: int = 0
+
+var next_pieces: Array = []
 var place_resets: int = 0
 var used_cells: Array = []
-
 var current_rotation: int = 0
 var current_location: Vector2i = start_location
 var current_piece: Shape
+var cells_in_rows: Array[int] = []
 
 func _ready():
 	pieces = $Shape.get_children()
 	shuffle_array = range(pieces.size())
 	
 	# New Game
+	cells_in_rows.resize(rows)
+	cells_in_rows.fill(0)
 	create_piece()
 
 func _process(_delta):
@@ -121,20 +124,18 @@ func move_piece(direction: Vector2i):
 func place_piece():
 	var out_of_field: bool = true
 	for i in current_piece.piece_shapes[current_rotation]:
+		cells_in_rows[i.y + current_location.y] += 1
 		$PlacedPieces.set_cell(i + current_location, tileset_id, Vector2i(current_piece.colour_index, 0))
 		if (i + current_location).y > 1:
 			out_of_field = false
+	
+	used_cells = $PlacedPieces.get_used_cells()
 	if out_of_field:
 		game_over()
 	else:
-		# TODO next defining these functions
-		if row_full():
-			clear_row()
-		else:
-			clear_piece()
-		
+		check_full_rows()
+		clear_piece()
 		create_piece()
-		used_cells = $PlacedPieces.get_used_cells()
 
 func rotate_piece(direction):
 	var attempt_rotate: int = current_piece.rotate_piece(current_rotation, direction)
@@ -160,10 +161,12 @@ func rotate_piece(direction):
 			draw_piece()
 			return
 
-func row_full():
-	pass
+func check_full_rows():
+	for i in range(rows):
+		if cells_in_rows[i] == 10:
+			clear_row(i)
 
-func clear_row():
+func clear_row(row: int):
 	pass
 
 ## Shuffles the possible pieces and appends them to the next_pieces array (7-Bag)
