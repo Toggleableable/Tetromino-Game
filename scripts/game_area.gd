@@ -11,13 +11,13 @@ const place_reset_limit: int = 15
 
 ## Delayed Auto Shift
 const DAS: float = 10.0 / 60.0
-var das_timer: float
+var das_timer: Array[float] = [0.0, 0.0]
 ## Auto repeat rate
 const ARR: float = 2.0 / 60.0
-var arr_timer: float
+var arr_timer: float = 0.0
 ## Entry delay
 const ARE: float = 6.0 / 60.0
-var are_timer: float
+var are_timer: float = 0.0
 
 const soft_drop_delay: float = 10.0 / 60.0
 
@@ -45,7 +45,7 @@ func _ready():
 	
 	create_piece()
 
-func _process(delta):
+func _process(delta: float):
 	if Input.is_action_just_pressed("exit"):
 		get_tree().quit()
 	
@@ -65,8 +65,30 @@ func _process(delta):
 	
 	if Input.is_action_just_pressed("move_left"):
 		move_piece(Vector2i.LEFT)
+	if Input.is_action_pressed("move_left"):
+		das_timer[0] += delta
+		if das_timer[0] > DAS:
+			arr_timer += delta
+			while arr_timer > ARR:
+				move_piece(Vector2i.LEFT)
+				arr_timer -= ARR
+	if Input.is_action_just_released("move_left"):
+		das_timer[0] = 0.0
+		arr_timer = 0.0
+	
 	if Input.is_action_just_pressed("move_right"):
 		move_piece(Vector2i.RIGHT)
+	if Input.is_action_pressed("move_right"):
+		das_timer[1] += delta
+		if das_timer[1] > DAS:
+			arr_timer += delta
+			while arr_timer > ARR:
+				move_piece(Vector2i.RIGHT)
+				arr_timer -= ARR
+	if Input.is_action_just_released("move_right"):
+		das_timer[1] = 0.0
+		arr_timer = 0.0
+	
 	
 	if Input.is_action_just_pressed("rotate_clockwise"):
 		rotate_piece(1)
@@ -157,7 +179,7 @@ func place_piece():
 
 func reset_timers():
 	$DropPieceTimer.start(fall_time)
-	das_timer = 0.0
+	das_timer = [0.0, 0.0]
 	arr_timer = 0.0
 	are_timer = 0.0
 
