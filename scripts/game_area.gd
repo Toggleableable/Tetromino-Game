@@ -126,17 +126,17 @@ func move_piece(direction: Vector2i):
 func place_piece():
 	var out_of_field: bool = true
 	for i in current_piece.piece_shapes[current_rotation]:
-		cells_in_rows[i.y + current_location.y].append(i + current_location)
+		cells_in_rows[i.y + current_location.y].append((i + current_location).x)
 		$PlacedPieces.set_cell(i + current_location, tileset_id, Vector2i(current_piece.colour_index, 0))
 		if (i + current_location).y > 1:
 			out_of_field = false
 	
-	used_cells = $PlacedPieces.get_used_cells()
 	if out_of_field:
 		game_over()
 	else:
 		check_full_rows()
 		clear_piece()
+		used_cells = $PlacedPieces.get_used_cells()
 		create_piece()
 
 func rotate_piece(direction):
@@ -163,17 +163,31 @@ func rotate_piece(direction):
 			draw_piece()
 			return
 
+## Checks the board for any full rows
 func check_full_rows():
 	var full_rows: Array[int] = []
 	for i in range(rows):
 		if cells_in_rows[i].size() == 10:
 			full_rows.append(i)
-	clear_row(full_rows)
+	if full_rows.size() > 0:
+		clear_rows(full_rows)
 
-func clear_row(row: Array[int]):
-	#for i in cells_in_rows:
-	
-	pass
+## Clears full rows and shifts the others downwards
+func clear_rows(full_rows: Array[int]):
+	var shift_amount: int = 0
+	for i in range(full_rows[-1], 0, -1):
+		if i in full_rows:
+			shift_amount += 1
+			for j in cells_in_rows[i]:
+				$PlacedPieces.erase_cell(Vector2i(j,i))
+		elif cells_in_rows[i].size() == 0:
+			cells_in_rows[i+shift_amount] = cells_in_rows[i].duplicate()
+			break
+		else:
+			for j in cells_in_rows[i]:
+				$PlacedPieces.set_cell(Vector2i(j,i) + Vector2i(0, shift_amount), tileset_id, $PlacedPieces.get_cell_atlas_coords(Vector2i(j,i)))
+				$PlacedPieces.erase_cell(Vector2i(j,i))
+			cells_in_rows[i+shift_amount] = cells_in_rows[i].duplicate()
 
 ## Shuffles the possible pieces and appends them to the next_pieces array (7-Bag)
 func shuffle_pieces():
