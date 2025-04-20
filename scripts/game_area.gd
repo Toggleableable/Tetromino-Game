@@ -19,7 +19,8 @@ var arr_timer: float = 0.0
 const ARE: float = 6.0 / 60.0
 var are_timer: float = 0.0
 
-const soft_drop_delay: float = 10.0 / 60.0
+const soft_drop_delay: float = 5.0 / 60.0
+var soft_drop_timer: float = 0.0
 
 var fall_time: float = 1
 var pieces: Array
@@ -54,7 +55,10 @@ func _process(delta: float):
 		return
 	
 	if Input.is_action_pressed("soft_drop"):
-		move_piece(Vector2i.DOWN)
+		soft_drop_timer += delta
+		while soft_drop_timer > soft_drop_delay:
+			move_piece(Vector2i.DOWN)
+			soft_drop_timer -= soft_drop_delay
 	if Input.is_action_just_pressed("hard_drop"):
 		var distance: int = 0
 		while can_move((distance + 1) * Vector2i.DOWN):
