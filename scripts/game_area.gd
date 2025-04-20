@@ -10,14 +10,16 @@ const place_time: float = 0.5
 const place_reset_limit: int = 15
 
 ## Delayed Auto Shift
-const DAS: float = 10 / 60
+const DAS: float = 10.0 / 60.0
 var das_timer: float
 ## Auto repeat rate
-const ARR: float = 2 / 60
+const ARR: float = 2.0 / 60.0
 var arr_timer: float
 ## Entry delay
-const ARE: float = 6 / 60
+const ARE: float = 6.0 / 60.0
 var are_timer: float
+
+const soft_drop_delay: float = 10.0 / 60.0
 
 var fall_time: float = 1
 var pieces: Array
@@ -51,7 +53,7 @@ func _process(delta):
 	if are_timer < ARE:
 		return
 	
-	if Input.is_action_just_pressed("soft_drop"):
+	if Input.is_action_pressed("soft_drop"):
 		move_piece(Vector2i.DOWN)
 	if Input.is_action_just_pressed("hard_drop"):
 		var distance: int = 0
@@ -155,9 +157,9 @@ func place_piece():
 
 func reset_timers():
 	$DropPieceTimer.start(fall_time)
-	das_timer = 0
-	arr_timer = 0
-	are_timer = 0
+	das_timer = 0.0
+	arr_timer = 0.0
+	are_timer = 0.0
 
 func rotate_piece(direction):
 	var attempt_rotate: int = current_piece.rotate_piece(current_rotation, direction)
