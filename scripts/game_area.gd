@@ -10,11 +10,14 @@ const place_time: float = 0.5
 const place_reset_limit: int = 15
 
 ## Delayed Auto Shift
-const DAS: float = 0
+const DAS: float = 10 / 60
+var das_timer: float
 ## Auto repeat rate
-const ARR: float = 0
+const ARR: float = 2 / 60
+var arr_timer: float
 ## Entry delay
-const ARE: float = 0
+const ARE: float = 6 / 60
+var are_timer: float
 
 var fall_time: float = 1
 var pieces: Array
@@ -40,10 +43,14 @@ func _ready():
 	
 	create_piece()
 
-func _process(_delta):
+func _process(delta):
 	if Input.is_action_just_pressed("exit"):
 		get_tree().quit()
-	# TODO change to be based on time, implement DAS and ARR
+	
+	are_timer += delta
+	if are_timer < ARE:
+		return
+	
 	if Input.is_action_just_pressed("soft_drop"):
 		move_piece(Vector2i.DOWN)
 	if Input.is_action_just_pressed("hard_drop"):
@@ -84,7 +91,7 @@ func create_piece():
 	current_rotation = start_rotation
 	current_location = start_location
 	place_resets = 0
-	$DropPieceTimer.start(fall_time)
+	reset_timers()
 	if next_pieces.size() <= next_queue:
 		shuffle_pieces()
 	current_piece = pieces[next_pieces.pop_front()]
@@ -145,6 +152,12 @@ func place_piece():
 		clear_piece()
 		used_cells = $PlacedPieces.get_used_cells()
 		create_piece()
+
+func reset_timers():
+	$DropPieceTimer.start(fall_time)
+	das_timer = 0
+	arr_timer = 0
+	are_timer = 0
 
 func rotate_piece(direction):
 	var attempt_rotate: int = current_piece.rotate_piece(current_rotation, direction)
