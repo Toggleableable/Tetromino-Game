@@ -9,6 +9,13 @@ const next_queue_location: Vector2i = Vector2i(15,2)
 const place_time: float = 0.5
 const place_reset_limit: int = 15
 
+## Delayed Auto Shift
+const DAS: float = 0
+## Auto repeat rate
+const ARR: float = 0
+## Entry delay
+const ARE: float = 0
+
 var fall_time: float = 1
 var pieces: Array
 var shuffle_array: Array
