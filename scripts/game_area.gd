@@ -19,6 +19,8 @@ var arr_timer: float = 0.0
 const ARE: float = 6.0 / 60.0
 var are_timer: float = 0.0
 
+var drop_timer_delay = 3.0
+var drop_timer: float = 0.0
 const soft_drop_delay: float = 5.0 / 60.0
 var soft_drop_timer: float = 0.0
 
@@ -47,6 +49,7 @@ func _ready():
 	create_piece()
 
 func _process(delta: float):
+	
 	if Input.is_action_just_pressed("exit"):
 		get_tree().quit()
 	
@@ -54,11 +57,18 @@ func _process(delta: float):
 	if are_timer < ARE:
 		return
 	
+	drop_timer += delta
+	
 	if Input.is_action_pressed("soft_drop"):
-		soft_drop_timer += delta
-		while soft_drop_timer > soft_drop_delay:
-			move_piece(Vector2i.DOWN)
-			soft_drop_timer -= soft_drop_delay
+		if can_move(Vector2i.DOWN):
+			soft_drop_timer += delta
+			drop_timer = 0.0
+			while soft_drop_timer > soft_drop_delay:
+				move_piece(Vector2i.DOWN)
+				soft_drop_timer -= soft_drop_delay
+		
+	if Input.is_action_just_released("soft_drop"):
+		soft_drop_timer = 0.0
 	if Input.is_action_just_pressed("hard_drop"):
 		var distance: int = 0
 		while can_move((distance + 1) * Vector2i.DOWN):
@@ -98,6 +108,10 @@ func _process(delta: float):
 		rotate_piece(1)
 	if Input.is_action_just_pressed("rotate_counter_clockwise"):
 		rotate_piece(-1)
+	
+	while drop_timer >= drop_timer_delay:
+		move_piece(Vector2i.DOWN)
+		drop_timer -= drop_timer_delay
 
 ## Checks if the current piece is able to move in the direction given
 func can_move(direction: Vector2i = Vector2i.ZERO, new_rotation: int = current_rotation) -> bool:
@@ -149,15 +163,14 @@ func draw_piece(piece: Shape = current_piece, location: Vector2i = current_locat
 		set_cell(i + location, tileset_id, Vector2i(piece.colour_index, 0))
 
 func game_over():
-	$DropPieceTimer.stop()
 	print("End")
 	# TODO Add game over screen + option to restart
 
 ## Moves the current piece in the direction specified
 func move_piece(direction: Vector2i):
 	if can_move(direction):
-		if direction == Vector2i.DOWN:
-			$DropPieceTimer.start(fall_time)
+		#if direction == Vector2i.DOWN:
+		#	drop_timer = 0.0
 		clear_piece()
 		current_location += direction
 		draw_piece()
@@ -182,12 +195,12 @@ func place_piece():
 		create_piece()
 
 func reset_timers():
-	$DropPieceTimer.start(fall_time)
 	das_timer = [0.0, 0.0]
 	arr_timer = 0.0
 	are_timer = 0.0
+	drop_timer = 0.0
 
-func rotate_piece(direction):
+func rotate_piece(direction: int):
 	var attempt_rotate: int = current_piece.rotate_piece(current_rotation, direction)
 	
 	# Set the index to get the correct kicks for the rotation
@@ -242,5 +255,5 @@ func shuffle_pieces():
 	shuffle_array.shuffle()
 	next_pieces.append_array(shuffle_array)
 
-func _on_drop_piece_timer_timeout() -> void:
-	move_piece(Vector2i.DOWN)
+#func _on_drop_piece_timer_timeout() -> void:
+#	move_piece(Vector2i.DOWN)
