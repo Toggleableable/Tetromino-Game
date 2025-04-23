@@ -8,6 +8,7 @@ const next_queue: int = 5
 const next_queue_location: Vector2i = Vector2i(15,2)
 const place_time: float = 0.5
 const place_reset_limit: int = 15
+const held_piece_location: Vector2i = Vector2i(-7, 2)
 
 ## Delayed Auto Shift
 const DAS: float = 10.0 / 60.0
@@ -36,6 +37,9 @@ var current_rotation: int = 0
 var current_location: Vector2i = start_location
 var current_piece: Shape
 var cells_in_rows: Array = []
+var held_piece: Shape
+var held_on_this_piece: bool = false
+
 
 func _ready():
 	pieces = $Shape.get_children()
@@ -58,6 +62,11 @@ func _process(delta: float):
 		return
 	
 	drop_timer += delta
+	
+	if Input.is_action_just_pressed("hold"):
+		if not held_on_this_piece:
+			hold_piece()
+		held_on_this_piece = true
 	
 	if Input.is_action_pressed("soft_drop"):
 		if can_move(Vector2i.DOWN):
@@ -138,6 +147,7 @@ func create_piece():
 	current_piece = pieces[next_pieces.pop_front()]
 	
 	draw_piece()
+	draw_ghost()
 	draw_next_pieces()
 	if !can_move():
 		game_over()
@@ -168,11 +178,36 @@ func draw_ghost(piece: Shape = current_piece, location: Vector2i = current_locat
 func draw_piece(piece: Shape = current_piece, location: Vector2i = current_location):
 	for i in piece.piece_shapes[current_rotation]:
 		set_cell(i + location, tileset_id, Vector2i(piece.colour_index, 0))
-	draw_ghost(piece, location)
 
 func game_over():
 	print("End")
 	# TODO Add game over screen + option to restart
+
+func hold_piece():
+	var buffer: Shape = null
+	clear_piece()
+	if held_piece == null:
+		held_piece = current_piece
+		create_piece()
+	
+	else:
+		clear_piece(held_piece, held_piece_location)
+		buffer = current_piece
+		current_piece = held_piece
+		held_piece = buffer
+		
+		current_rotation = start_rotation
+		current_location = start_location
+		place_resets = 0
+		reset_timers()
+		
+		draw_piece()
+		if !can_move():
+			game_over()
+		else:
+			move_piece(Vector2i.DOWN)
+	
+	draw_piece(held_piece, held_piece_location)
 
 ## Moves the current piece in the direction specified
 func move_piece(direction: Vector2i):
@@ -182,6 +217,7 @@ func move_piece(direction: Vector2i):
 		clear_piece()
 		current_location += direction
 		draw_piece()
+		draw_ghost()
 	elif direction == Vector2i.DOWN:
 		place_piece()
 
@@ -201,6 +237,7 @@ func place_piece():
 		clear_piece()
 		used_cells = $PlacedPieces.get_used_cells()
 		create_piece()
+		held_on_this_piece = false
 
 func reset_timers():
 	das_timer = [0.0, 0.0]
@@ -232,6 +269,7 @@ func rotate_piece(direction: int):
 			current_location += direction * i
 			current_rotation = attempt_rotate
 			draw_piece()
+			draw_ghost()
 			return
 
 ## Checks the board for any full rows
