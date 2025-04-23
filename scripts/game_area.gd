@@ -19,7 +19,7 @@ var arr_timer: float = 0.0
 const ARE: float = 6.0 / 60.0
 var are_timer: float = 0.0
 
-var drop_timer_delay = 3.0
+var drop_timer_delay = 1.0
 var drop_timer: float = 0.0
 const soft_drop_delay: float = 5.0 / 60.0
 var soft_drop_timer: float = 0.0
@@ -66,7 +66,6 @@ func _process(delta: float):
 			while soft_drop_timer > soft_drop_delay:
 				move_piece(Vector2i.DOWN)
 				soft_drop_timer -= soft_drop_delay
-		
 	if Input.is_action_just_released("soft_drop"):
 		soft_drop_timer = 0.0
 	if Input.is_action_just_pressed("hard_drop"):
@@ -157,10 +156,19 @@ func draw_next_pieces():
 		draw_piece(pieces[next_pieces[i]], draw_location)
 		draw_location += Vector2i(0, 3)
 
+func draw_ghost(piece: Shape = current_piece, location: Vector2i = current_location):
+	$GhostPiece.clear()
+	var distance: int = 0
+	while can_move((distance + 1) * Vector2i.DOWN):
+		distance += 1
+	for i in piece.piece_shapes[current_rotation]:
+		$GhostPiece.set_cell(i + location + Vector2i(0, distance), tileset_id, Vector2i(piece.colour_index, 0))
+
 ## Iterates through the cells in a piece and draws them in the given location
 func draw_piece(piece: Shape = current_piece, location: Vector2i = current_location):
 	for i in piece.piece_shapes[current_rotation]:
 		set_cell(i + location, tileset_id, Vector2i(piece.colour_index, 0))
+	draw_ghost(piece, location)
 
 func game_over():
 	print("End")
