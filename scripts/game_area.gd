@@ -259,6 +259,7 @@ func clear_rows(full_rows: Array[int]):
 				$PlacedPieces.set_cell(Vector2i(j,i) + Vector2i(0, shift_amount), tileset_id, $PlacedPieces.get_cell_atlas_coords(Vector2i(j,i)))
 				$PlacedPieces.erase_cell(Vector2i(j,i))
 			cells_in_rows[i+shift_amount] = cells_in_rows[i].duplicate()
+			cells_in_rows[i] = []
 
 ## Shuffles the possible pieces and appends them to the next_pieces array (7-Bag)
 func shuffle_pieces():
