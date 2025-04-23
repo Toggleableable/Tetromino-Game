@@ -166,6 +166,7 @@ func draw_next_pieces():
 		draw_piece(pieces[next_pieces[i]], draw_location)
 		draw_location += Vector2i(0, 3)
 
+## Draws the ghost for where the current piece would land
 func draw_ghost(piece: Shape = current_piece, location: Vector2i = current_location):
 	$GhostPiece.clear()
 	var distance: int = 0
@@ -179,10 +180,12 @@ func draw_piece(piece: Shape = current_piece, location: Vector2i = current_locat
 	for i in piece.piece_shapes[current_rotation]:
 		set_cell(i + location, tileset_id, Vector2i(piece.colour_index, 0))
 
+## Stops the game from running - WIP
 func game_over():
 	print("End")
 	# TODO Add game over screen + option to restart
 
+## Swaps out the held piece with the current one and draws both
 func hold_piece():
 	var buffer: Shape = null
 	clear_piece()
@@ -239,12 +242,14 @@ func place_piece():
 		create_piece()
 		held_on_this_piece = false
 
+## Resets the variables for the next piece to spawn
 func reset_timers():
 	das_timer = [0.0, 0.0]
 	arr_timer = 0.0
 	are_timer = 0.0
 	drop_timer = 0.0
 
+## Attempts to rotate the current piece in accordance with the kick list for the associated piece
 func rotate_piece(direction: int):
 	var attempt_rotate: int = current_piece.rotate_piece(current_rotation, direction)
 	if current_rotation == attempt_rotate:
@@ -303,6 +308,3 @@ func clear_rows(full_rows: Array[int]):
 func shuffle_pieces():
 	shuffle_array.shuffle()
 	next_pieces.append_array(shuffle_array)
-
-#func _on_drop_piece_timer_timeout() -> void:
-#	move_piece(Vector2i.DOWN)
