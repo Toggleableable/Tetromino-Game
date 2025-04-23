@@ -210,6 +210,8 @@ func reset_timers():
 
 func rotate_piece(direction: int):
 	var attempt_rotate: int = current_piece.rotate_piece(current_rotation, direction)
+	if current_rotation == attempt_rotate:
+		return
 	
 	# Set the index to get the correct kicks for the rotation
 	var index: int
