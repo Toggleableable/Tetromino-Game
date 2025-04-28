@@ -88,12 +88,16 @@ func _process(delta: float):
 	if Input.is_action_just_pressed("move_left"):
 		move_piece(Vector2i.LEFT)
 	if Input.is_action_pressed("move_left"):
-		das_timer[0] += delta
-		if das_timer[0] > DAS:
-			arr_timer += delta
-			while arr_timer > ARR:
-				move_piece(Vector2i.LEFT)
-				arr_timer -= ARR
+		if can_move(Vector2i.LEFT):
+			das_timer[0] += delta
+			if das_timer[0] > DAS:
+				arr_timer += delta
+				while arr_timer > ARR:
+					move_piece(Vector2i.LEFT)
+					arr_timer -= ARR
+		else:
+			das_timer[0] = 0.0
+			arr_timer = 0.0
 	if Input.is_action_just_released("move_left"):
 		das_timer[0] = 0.0
 		arr_timer = 0.0
@@ -101,12 +105,16 @@ func _process(delta: float):
 	if Input.is_action_just_pressed("move_right"):
 		move_piece(Vector2i.RIGHT)
 	if Input.is_action_pressed("move_right"):
-		das_timer[1] += delta
-		if das_timer[1] > DAS:
-			arr_timer += delta
-			while arr_timer > ARR:
-				move_piece(Vector2i.RIGHT)
-				arr_timer -= ARR
+		if can_move(Vector2i.RIGHT):
+			das_timer[1] += delta
+			if das_timer[1] > DAS:
+				arr_timer += delta
+				while arr_timer > ARR:
+					move_piece(Vector2i.RIGHT)
+					arr_timer -= ARR
+		else:
+			das_timer[1] = 0.0
+			arr_timer = 0.0
 	if Input.is_action_just_released("move_right"):
 		das_timer[1] = 0.0
 		arr_timer = 0.0
@@ -205,6 +213,7 @@ func hold_piece():
 		reset_timers()
 		
 		draw_piece()
+		draw_ghost()
 		if !can_move():
 			game_over()
 		else:
