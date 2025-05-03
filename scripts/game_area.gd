@@ -140,8 +140,8 @@ func can_move(direction: Vector2i = Vector2i.ZERO, new_rotation: int = current_r
 	return true
 
 ## Clears the tiles of the current piece in the current location
-func clear_piece(piece: Shape = current_piece, location: Vector2i = current_location, rotation: int = current_rotation):
-	for i in piece.piece_shapes[rotation]:
+func clear_piece(piece: Shape = current_piece, location: Vector2i = current_location, piece_rotation: int = current_rotation):
+	for i in piece.piece_shapes[piece_rotation]:
 		erase_cell(i + location)
 
 ## Generates a new piece from the next_pieces queue and reset all the relavent variables
