@@ -1,8 +1,9 @@
-[gd_scene load_steps=10 format=4 uid="uid://0x1wpp236fdk"]
+[gd_scene load_steps=11 format=4 uid="uid://0x1wpp236fdk"]
 
 [ext_resource type="Texture2D" uid="uid://rvsmguaenvug" path="res://assets/Default Tetromino Tilemap.png" id="1_o5qli"]
 [ext_resource type="Script" uid="uid://c72g17oe8kh2w" path="res://scripts/game_area.gd" id="2_0wfyh"]
 [ext_resource type="PackedScene" uid="uid://5k1foyyc7pcp" path="res://scenes/shape.tscn" id="3_sugp2"]
+[ext_resource type="PackedScene" uid="uid://dwb068733utc6" path="res://scenes/ui.tscn" id="4_jyhfs"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0wfyh"]
 texture = ExtResource("1_o5qli")
@@ -46,10 +47,10 @@ sources/0 = SubResource("TileSetAtlasSource_jyhfs")
 [node name="MainScene" type="Node"]
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(-236, -26)
 anchor_mode = 0
 
 [node name="GameArea" type="TileMapLayer" parent="."]
+position = Vector2(236, 26)
 tile_map_data = PackedByteArray("AAD/////AAACAAAAAAD//wAAAAACAAAAAAD//wEAAAACAAAAAAD//wIAAAAFAAAAAAD//wMAAAACAAAAAAD//wQAAAACAAAAAAD//wUAAAACAAAAAAD//wYAAAACAAAAAAD//wcAAAACAAAAAAD//wgAAAACAAAAAAD//wkAAAACAAAAAAD//woAAAACAAAAAAD//wsAAAACAAAAAAD//wwAAAACAAAAAAD//w0AAAACAAAAAAD//w4AAAACAAAAAAD//w8AAAACAAAAAAD//xAAAAACAAAAAAD//xEAAAACAAAAAAAAAP//AAACAAAAAAABAP//AAACAAAAAAACAP//AAACAAAAAAADAP//AAACAAAAAAAEAP//AAACAAAAAAAFAP//AAACAAAAAAAGAP//AAACAAAAAAAHAP//AAACAAAAAAAIAP//AAACAAAAAAAJAP//AAACAAAAAAAKAP//AAACAAAAAAAKAAAAAAACAAAAAAAKAAEAAAACAAAAAAAKAAIAAAAFAAAAAAAKAAMAAAACAAAAAAAKAAQAAAACAAAAAAAKAAUAAAACAAAAAAAKAAYAAAACAAAAAAAKAAcAAAACAAAAAAAKAAgAAAACAAAAAAAKAAkAAAACAAAAAAAKAAoAAAACAAAAAAAKAAsAAAACAAAAAAAKAAwAAAACAAAAAAAKAA0AAAACAAAAAAAKAA4AAAACAAAAAAAKAA8AAAACAAAAAAAKABAAAAACAAAAAAAKABEAAAACAAAAAAAKABIAAAACAAAAAAD//xMAAAACAAAAAAD//xQAAAACAAAAAAD//xUAAAACAAAAAAD//xYAAAACAAAAAAAKABYAAAACAAAAAAAKABUAAAACAAAAAAAKABQAAAACAAAAAAAKABMAAAACAAAAAAD//xIAAAACAAAAAAAAABYAAAACAAAAAAABABYAAAACAAAAAAACABYAAAACAAAAAAADABYAAAACAAAAAAAEABYAAAACAAAAAAAFABYAAAACAAAAAAAGABYAAAACAAAAAAAHABYAAAACAAAAAAAIABYAAAACAAAAAAAJABYAAAACAAAAAAA=")
 tile_set = SubResource("TileSet_sugp2")
 script = ExtResource("2_0wfyh")
@@ -63,3 +64,5 @@ tile_set = SubResource("TileSet_jyhfs")
 modulate = Color(0.792157, 0.792157, 0.792157, 0.643137)
 visibility_layer = 3
 tile_set = SubResource("TileSet_tbgi4")
+
+[node name="UI" parent="GameArea" instance=ExtResource("4_jyhfs")]
