@@ -1,5 +1,10 @@
 # WIP Tetromino Game
 
-Goals of:
+Currently implemented:
+- Core functionality
 - Following the standard modern guidelines (SRS, 7-bag etc)
-- Having reasonable touchscreen controls (after getting it working on PC)
+
+Still to do:
+- Scoring
+- Touchscreen controls
+- Non-Placeholder graphics
